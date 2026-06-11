@@ -1,0 +1,11 @@
+[project]
+name = "project-finder"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "arxiv>=4.0.0",
+    "beautifulsoup4>=4.15.0",
+    "pymupdf>=1.27.2.3",
+]
