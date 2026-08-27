@@ -17,3 +17,8 @@ scratch/
 
 # Node / Frontend
 frontend/node_modules/
+
+# OS metadata
+desktop.ini
+.DS_Store
+Thumbs.db
