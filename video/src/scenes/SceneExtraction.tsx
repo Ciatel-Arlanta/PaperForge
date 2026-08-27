@@ -5,33 +5,33 @@ import {
   spring,
   useVideoConfig
 } from 'remotion'
-import {
-  Search,
-  FileCode,
-  AlertOctagon,
-  CheckCircle2,
-  ScanLine
-} from 'lucide-react'
+import { ScanLine, AlertOctagon, CheckCircle2, FileCode } from 'lucide-react'
 import { BackgroundGrid } from '../components/BackgroundGrid'
+import { BrowserFrame } from '../components/BrowserFrame'
 import { GithubIcon, HuggingFaceIcon } from '../components/Icons'
 
 export const SceneExtraction: React.FC = () => {
   const frame = useCurrentFrame()
   const { fps } = useVideoConfig()
 
-  // Scene transitions
-  const cardScale = spring({ frame: frame - 10, fps, config: { damping: 14 } })
-  const scanProgress = interpolate(frame, [40, 110], [0, 100], {
+  // Transitions
+  const headerOpacity = interpolate(frame, [0, 20], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp'
   })
 
-  const limitationGlow = interpolate(frame, [80, 110], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp'
+  const browserProgress = spring({
+    frame: frame - 10,
+    fps,
+    config: { damping: 15 }
   })
 
-  const badgesProgress = spring({ frame: frame - 110, fps, config: { damping: 12 } })
+  // Floating highlight callout card
+  const calloutProgress = spring({
+    frame: frame - 40,
+    fps,
+    config: { damping: 13 }
+  })
 
   return (
     <div
@@ -42,18 +42,20 @@ export const SceneExtraction: React.FC = () => {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
-        padding: '50px'
+        justifyContent: 'flex-start',
+        padding: '40px 60px',
+        overflow: 'hidden'
       }}
     >
       <BackgroundGrid accentColor="#10b981" />
 
-      {/* Header Tag */}
+      {/* Top Tagline */}
       <div
         style={{
           zIndex: 10,
           textAlign: 'center',
-          marginBottom: '30px'
+          opacity: headerOpacity,
+          marginBottom: '24px'
         }}
       >
         <div
@@ -61,226 +63,107 @@ export const SceneExtraction: React.FC = () => {
             display: 'inline-flex',
             alignItems: 'center',
             gap: '8px',
-            padding: '6px 18px',
+            padding: '4px 16px',
             borderRadius: '9999px',
             backgroundColor: 'rgba(16, 185, 129, 0.12)',
             border: '1px solid rgba(16, 185, 129, 0.3)',
             color: '#34d399',
-            fontSize: '16px',
+            fontSize: '14px',
             fontWeight: 700,
             letterSpacing: '0.08em',
             textTransform: 'uppercase',
-            marginBottom: '12px'
+            marginBottom: '6px'
           }}
         >
-          <ScanLine size={18} />
-          <span>Deep Research Extraction Engine</span>
+          <ScanLine size={16} />
+          <span>Automated Research Intelligence</span>
         </div>
-        <h2
-          style={{
-            fontSize: '48px',
-            fontWeight: 800,
-            color: '#ffffff',
-            letterSpacing: '-0.02em'
-          }}
-        >
-          We extract what other tools ignore:{' '}
-          <span style={{ color: '#fbbf24' }}>The Unsolved Limitations</span>
+        <h2 style={{ fontSize: '44px', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em' }}>
+          Real GitHub Repos & <span style={{ color: '#fbbf24' }}>Extracted Author Limitations</span>
         </h2>
       </div>
 
-      {/* Main Interactive Paper Card */}
+      {/* Real App Screenshot & Floating Highlight Card */}
       <div
         style={{
           zIndex: 10,
-          width: '100%',
-          maxWidth: '1250px',
-          borderRadius: '24px',
-          backgroundColor: 'rgba(18, 18, 22, 0.92)',
-          border: '1px solid rgba(255, 255, 255, 0.12)',
-          boxShadow: '0 25px 60px rgba(0,0,0,0.6)',
-          backdropFilter: 'blur(20px)',
-          padding: '36px',
-          transform: `scale(${cardScale})`,
           position: 'relative',
-          overflow: 'hidden'
+          width: '100%',
+          maxWidth: '1400px',
+          display: 'flex',
+          justifyContent: 'center',
+          opacity: browserProgress
         }}
       >
-        {/* Laser Scanning Bar */}
+        {/* Real App Screenshot */}
+        <div style={{ width: '100%' }}>
+          <BrowserFrame
+            imageSrc="screenshots/02_has_code_filtered.png"
+            url="http://localhost:8000/?has_code=true"
+            scale={0.96}
+            rotateX={4}
+            boxShadow="0 30px 80px rgba(0, 0, 0, 0.7), 0 0 50px rgba(16, 185, 129, 0.2)"
+          />
+        </div>
+
+        {/* Floating Callout Overlay */}
         <div
           style={{
             position: 'absolute',
-            top: 0,
-            bottom: 0,
-            left: `${scanProgress}%`,
-            width: '4px',
-            background: 'linear-gradient(180deg, transparent 0%, #10b981 50%, transparent 100%)',
-            boxShadow: '0 0 25px #10b981, 0 0 50px #10b981',
-            opacity: scanProgress > 0 && scanProgress < 100 ? 1 : 0
-          }}
-        />
-
-        {/* Paper Metadata Bar */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '20px',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-            paddingBottom: '16px'
+            bottom: '40px',
+            right: '40px',
+            width: '480px',
+            borderRadius: '16px',
+            backgroundColor: 'rgba(12, 12, 16, 0.95)',
+            border: '2px solid #f59e0b',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.35)',
+            backdropFilter: 'blur(20px)',
+            padding: '22px',
+            opacity: calloutProgress,
+            transform: `translateY(${(1 - calloutProgress) * 40}px) scale(${calloutProgress})`
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+            <AlertOctagon size={18} color="#fbbf24" />
+            <span style={{ fontSize: '13px', fontWeight: 800, color: '#fbbf24', textTransform: 'uppercase' }}>
+              Deep Limitation Extracted
+            </span>
+          </div>
+          <p style={{ fontSize: '14px', color: '#fef3c7', lineHeight: 1.5, marginBottom: '14px' }}>
+            &ldquo;Suffers from 2.4x latency overhead when routing visual tokens and vulnerable to adversarial noise.&rdquo;
+          </p>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <div
               style={{
-                fontFamily: 'monospace',
-                fontSize: '14px',
-                color: '#60a5fa',
-                backgroundColor: 'rgba(59, 130, 246, 0.15)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
                 padding: '4px 10px',
                 borderRadius: '6px',
+                backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                fontSize: '12px',
+                color: '#ffffff',
                 fontWeight: 600
               }}
             >
-              arXiv:2606.12412v1
-            </span>
-            <span
+              <GithubIcon size={14} />
+              <span>Official Repo Found</span>
+            </div>
+            <div
               style={{
-                fontSize: '13px',
-                color: '#10b981',
-                backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
                 padding: '4px 10px',
                 borderRadius: '6px',
-                fontWeight: 600,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px'
+                backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                fontSize: '12px',
+                color: '#34d399',
+                fontWeight: 600
               }}
             >
               <CheckCircle2 size={14} />
-              PyMuPDF Section Parsed
-            </span>
-          </div>
-
-          {/* GitHub & HuggingFace Badges */}
-          <div
-            style={{
-              display: 'flex',
-              gap: '10px',
-              opacity: badgesProgress,
-              transform: `scale(${badgesProgress})`
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                padding: '6px 14px',
-                borderRadius: '8px',
-                fontSize: '14px',
-                fontWeight: 600,
-                color: '#f4f4f5'
-              }}
-            >
-              <GithubIcon size={16} />
-              <span>github.com/elmma/mllm-reroute</span>
-            </div>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                backgroundColor: 'rgba(245, 158, 11, 0.12)',
-                border: '1px solid rgba(245, 158, 11, 0.3)',
-                padding: '6px 14px',
-                borderRadius: '8px',
-                fontSize: '14px',
-                fontWeight: 600,
-                color: '#fbbf24'
-              }}
-            >
-              <HuggingFaceIcon size={16} />
-              <span>Qwen2.5-7B Weights</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Paper Title */}
-        <h3
-          style={{
-            fontSize: '28px',
-            fontWeight: 800,
-            color: '#ffffff',
-            lineHeight: 1.3,
-            marginBottom: '16px'
-          }}
-        >
-          Reroute, Don&apos;t Remove: Recoverable Visual Token Routing for Multimodal LLMs
-        </h3>
-
-        {/* Two-Column Deep Insights Grid */}
-        <div style={{ display: 'flex', gap: '24px' }}>
-          {/* Left: Core Thesis & Conclusion */}
-          <div
-            style={{
-              flex: 1,
-              backgroundColor: 'rgba(255, 255, 255, 0.03)',
-              borderRadius: '14px',
-              border: '1px solid rgba(255, 255, 255, 0.06)',
-              padding: '20px'
-            }}
-          >
-            <div style={{ fontSize: '13px', fontWeight: 700, color: '#60a5fa', textTransform: 'uppercase', marginBottom: '8px' }}>
-              ✓ Extracted Core Breakthrough
-            </div>
-            <p style={{ fontSize: '15px', color: '#d4d4d8', lineHeight: 1.5 }}>
-              Proposes a dynamic token router that preserves unselected visual tokens in a lightweight secondary buffer instead of pruning them, maintaining 98.4% visual fidelity.
-            </p>
-          </div>
-
-          {/* Right: The High-Value Limitation Box */}
-          <div
-            style={{
-              flex: 1.2,
-              backgroundColor: `rgba(245, 158, 11, ${0.05 + limitationGlow * 0.1})`,
-              borderRadius: '14px',
-              border: `2px solid rgba(245, 158, 11, ${0.3 + limitationGlow * 0.5})`,
-              padding: '20px',
-              boxShadow: `0 0 ${limitationGlow * 30}px rgba(245, 158, 11, 0.25)`,
-              transition: 'all 0.3s ease'
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                fontSize: '13px',
-                fontWeight: 800,
-                color: '#fbbf24',
-                textTransform: 'uppercase',
-                marginBottom: '8px'
-              }}
-            >
-              <AlertOctagon size={16} />
-              <span>⚡ Extracted Limitation & Project Opportunity</span>
-            </div>
-            <p style={{ fontSize: '15px', color: '#fef3c7', lineHeight: 1.5, fontWeight: 500 }}>
-              &ldquo;The secondary buffer incurs a 2.4x latency penalty when visual tokens exceed 128, and fails to handle adversarial noise in perturbed video frames.&rdquo;
-            </p>
-            <div
-              style={{
-                marginTop: '12px',
-                fontSize: '13px',
-                color: '#fbbf24',
-                fontWeight: 700
-              }}
-            >
-              👉 Blueprint Target: Implement zero-copy buffer + adversarial robust quantization filter.
+              <span>PyMuPDF Parsed</span>
             </div>
           </div>
         </div>

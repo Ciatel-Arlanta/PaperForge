@@ -22,6 +22,7 @@
     "@types/web": "0.0.166",
     "eslint": "9.19.0",
     "prettier": "3.8.1",
+    "puppeteer": "^25.9.0",
     "typescript": "5.9.3"
   },
   "scripts": {
