@@ -1,6 +1,7 @@
-# ArXiv Project Finder & AI Agent Prompt Studio
+# PaperForge 🔨
 
-An intelligent research-to-code exploration platform and multi-agent project formulation engine. It indexes research papers from arXiv (AI, Cybersecurity, and Cross-domain intersections), automatically extracts core abstracts, conclusions, and explicit limitations/future work, and transforms them into comprehensive, production-grade engineering directives for AI coding agents (**Antigravity, Claude Code, Codex, Cursor**).
+> **Research-to-Code Platform & Multi-Agent Prompt Studio**
+> Transform cutting-edge arXiv research papers and extracted limitations into battle-tested software systems using AI coding agents (**Antigravity, Claude Code, Codex, Cursor**).
 
 Built with **FastAPI**, **SQLite**, **PyMuPDF**, and **React 19 / TypeScript / Tailwind CSS** adhering to [`@ibelick/ui-skills`](https://github.com/ibelick/ui-skills) (`baseline-ui`).
 
@@ -40,9 +41,10 @@ Open **[http://localhost:8000](http://localhost:8000)** in your browser to acces
 ## 🚀 Key Features
 
 ### 1. 🔍 Research Insights Explorer
-- **150+ Indexed Papers** across AI, Machine Learning, and Cybersecurity domains.
+- **150+ Pre-Indexed Papers** across AI, Machine Learning, and Cybersecurity domains.
 - **Deep Extraction Pipeline**: Automatically parses paper conclusions and cited limitations from local PDFs (via PyMuPDF) and arXiv HTML fallbacks.
-- **Search & Filters**: Instant keyword search across abstracts, authors, conclusions, and limitations, plus quick filters for "Has Limitations" and "Starred".
+- **GitHub Reference Code & Model Links**: Automatically extracts official GitHub repositories and Hugging Face model checkpoints.
+- **Search & Filters**: Instant keyword search across abstracts, authors, conclusions, and limitations, plus quick filters for `Has Limitations`, `Has Code`, and `Starred`.
 - **Built-in Local PDF Viewer**: Open and read cached PDFs in an embedded reader tab or full browser tab without re-downloading.
 
 ### 2. 🤖 AI Agent Prompt Studio

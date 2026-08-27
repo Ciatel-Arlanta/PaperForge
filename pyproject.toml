@@ -1,7 +1,7 @@
 [project]
-name = "project-finder"
+name = "paper-forge"
 version = "0.1.0"
-description = "ArXiv Research-to-Project Finder & AI Agent Prompt Studio"
+description = "PaperForge: Research-to-Code Platform & Multi-Agent Prompt Studio"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [

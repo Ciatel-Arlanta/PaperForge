@@ -29,8 +29,8 @@ async def lifespan(app: FastAPI):
     # Shutdown logic if any
 
 app = FastAPI(
-    title="ArXiv Project Finder & AI Prompt Studio API",
-    description="Research-to-Code Platform with Intelligent Agent Prompt Synthesis",
+    title="PaperForge: Research-to-Code Platform API",
+    description="Research-to-Code Platform with Intelligent Multi-Agent Prompt Synthesis",
     version="1.0.0",
     lifespan=lifespan
 )
@@ -45,7 +45,7 @@ app.add_middleware(
 
 @app.get("/api/health")
 def health_check():
-    return {"status": "ok", "service": "project_finder"}
+    return {"status": "ok", "service": "paper_forge"}
 
 @app.get("/api/papers", response_model=PaperListResponse)
 def list_papers(

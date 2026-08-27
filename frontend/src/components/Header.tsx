@@ -30,10 +30,10 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-zinc-900 dark:text-zinc-50 text-base tracking-tight">
-                ProjectFinder
+              <span className="font-bold text-zinc-900 dark:text-zinc-50 text-base tracking-tight flex items-center gap-1.5">
+                PaperForge
               </span>
-              <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-medium">
+              <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold border border-blue-200/50 dark:border-blue-800/40">
                 Research-to-Code
               </span>
             </div>
