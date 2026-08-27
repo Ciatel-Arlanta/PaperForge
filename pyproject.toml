@@ -1,11 +1,21 @@
 [project]
 name = "project-finder"
 version = "0.1.0"
-description = "Add your description here"
+description = "ArXiv Research-to-Project Finder & AI Agent Prompt Studio"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "arxiv>=4.0.0",
     "beautifulsoup4>=4.15.0",
+    "fastapi>=0.141.1",
+    "httpx>=0.28.1",
+    "pydantic>=2.13.4",
     "pymupdf>=1.27.2.3",
+    "pytest>=9.1.1",
+    "python-multipart>=0.0.32",
+    "uvicorn[standard]>=0.52.4",
 ]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

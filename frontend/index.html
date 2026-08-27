@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ProjectFinder | Research-to-Code & AI Prompt Studio</title>
+
+    <!-- Immediate theme injection script to prevent Flash of Unstyled Theme (FOUC) -->
+    <script>
+      (function () {
+        try {
+          var savedTheme = localStorage.getItem('project_finder_theme');
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
+
+    <style>
+      html.dark, html.dark body {
+        background-color: #09090b !important;
+        color: #fafafa !important;
+        color-scheme: dark;
+      }
+      html, body {
+        background-color: #fafafa;
+        color: #09090b;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

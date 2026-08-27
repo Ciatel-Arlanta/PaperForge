@@ -4,8 +4,16 @@ __pycache__/
 build/
 dist/
 wheels/
-*.egg-info
+*.egg-info/
+.pytest_cache/
+test_papers.db
 
 # Virtual environments
-.venv
-/pdfs
+.venv/
+
+# Local data & PDFs
+/pdfs/
+scratch/
+
+# Node / Frontend
+frontend/node_modules/

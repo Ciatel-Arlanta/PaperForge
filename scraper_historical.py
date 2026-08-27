@@ -5,12 +5,14 @@ import fitz
 import re
 import time
 import requests
+import argparse
 from bs4 import BeautifulSoup
 from typing import List, Dict
+from datetime import datetime, timedelta, timezone
 
 PDF_DIR = "pdfs"
-TRACKING_FILE = "downloaded_papers.json"
-OUTPUT_MD = "arxiv_insights.md"
+TRACKING_FILE = "downloaded_papers_historical.json"
+OUTPUT_MD = "arxiv_insights_historical.md"
 
 def init_env():
     os.makedirs(PDF_DIR, exist_ok=True)
@@ -23,8 +25,8 @@ def load_tracking() -> dict:
         with open(TRACKING_FILE, "r", encoding="utf-8") as f:
             data = json.load(f)
             if isinstance(data, list):
-                # Migrate from list to dict format mapping paper_id to its URL
                 return {paper_id: f"https://arxiv.org/abs/{paper_id}" for paper_id in data}
+                
             return data
     except Exception as e:
         print(f"Warning: Could not load tracking file: {e}. Starting fresh.")
@@ -160,7 +162,6 @@ def extract_from_html(paper_id: str) -> Dict[str, str]:
         "Limitations": "Not found."
     }
     
-    # Strip any version suffix from ID for HTML URL, e.g. "2406.12320v1" -> "2406.12320"
     clean_id = re.sub(r'v\d+$', '', paper_id)
     
     urls = [
@@ -190,7 +191,7 @@ def extract_from_html(paper_id: str) -> Dict[str, str]:
                             paragraphs = sec.find_all('p')
                             sections["Limitations"] = " ".join([p.get_text().strip() for p in paragraphs])
                             
-                # Fallback: if not using section tags, search for headings directly
+                # Fallback headings directly
                 if sections["Conclusion"] == "Not found.":
                     for h in soup.find_all(['h1', 'h2', 'h3', 'h4', 'h5', 'h6']):
                         h_text = h.get_text().strip().lower()
@@ -217,14 +218,12 @@ def extract_from_html(paper_id: str) -> Dict[str, str]:
                             if paragraphs:
                                 sections["Limitations"] = " ".join(paragraphs)
                 
-                # Clean and truncate
                 for key in sections:
                     val = sections[key]
                     if val != "Not found.":
                         val = re.sub(r'\s+', ' ', val)
                         sections[key] = val[:2000] + ("..." if len(val) > 2000 else "")
                 
-                # If we successfully retrieved something, break to avoid hitting other mirrors
                 if sections["Conclusion"] != "Not found." or sections["Limitations"] != "Not found.":
                     break
         except Exception as e:
@@ -244,10 +243,19 @@ def process_pdf(pdf_path: str) -> str:
         return ""
 
 def main():
+    parser = argparse.ArgumentParser(description="Scrape arXiv papers that are at least N days old.")
+    parser.path_arg = parser.add_argument("--age-days", type=int, default=60, help="Minimum age of papers in days (default: 60 for ~2 months)")
+    args = parser.parse_args()
+
     init_env()
     downloaded = load_tracking()
     
-    queries = [
+    # Calculate threshold date
+    cutoff_date = datetime.now(timezone.utc) - timedelta(days=args.age_days)
+    date_str = cutoff_date.strftime("%Y%m%d%H%M")
+    print(f"Polling papers submitted BEFORE: {cutoff_date.strftime('%Y-%m-%d %H:%M UTC')} (submittedDate:[199001010000 TO {date_str}])")
+    
+    base_queries = [
         {"name": "AI & Cybersecurity Intersection", "query": "(cat:cs.CR) AND (cat:cs.AI OR cat:cs.LG OR cat:cs.CL)", "limit": 35},
         {"name": "AI Only", "query": "cat:cs.AI OR cat:cs.LG OR cat:cs.CL", "limit": 10},
         {"name": "Cybersecurity Only", "query": "cat:cs.CR", "limit": 5}
@@ -255,10 +263,14 @@ def main():
     
     all_results = []
     
-    for q in queries:
+    for q in base_queries:
+        # Append date filter to query
+        date_query = f"({q['query']}) AND submittedDate:[199001010000 TO {date_str}]"
         print(f"\nFetching papers for: {q['name']}...")
-        # Fetch a larger window to find new papers (skipping the already downloaded ones)
-        papers = fetch_papers_with_retry(q["query"], q["limit"] + 60)
+        print(f"Query: {date_query}")
+        
+        # Fetch a larger window to find papers (skipping already downloaded ones)
+        papers = fetch_papers_with_retry(date_query, q["limit"] + 60)
         
         count = 0
         for p in papers:
@@ -270,7 +282,12 @@ def main():
                 print(f"Skipping already processed paper: {p.title}")
                 continue
                 
-            print(f"Processing ({count+1}/{q['limit']}): {p.title}")
+            # Extra safety check on the publish date
+            if p.published > cutoff_date:
+                print(f"Skipping paper too new ({p.published}): {p.title}")
+                continue
+                
+            print(f"Processing ({count+1}/{q['limit']}): {p.title} (Published: {p.published.strftime('%Y-%m-%d')})")
             sanitized_title = re.sub(r'[^a-zA-Z0-9\s_\-\.]', '', p.title)
             sanitized_title = re.sub(r'\s+', ' ', sanitized_title).strip()[:120]
             pdf_filename = f"{sanitized_title}.pdf"
@@ -344,7 +361,7 @@ def main():
                 f.write(existing_content)
                 f.write("\n\n# New Run Insights\n\n")
             else:
-                f.write("# ArXiv Insights: AI and Cybersecurity\n\n")
+                f.write("# ArXiv Insights (Historical): AI and Cybersecurity\n\n")
             
             current_cat = ""
             for res in sorted(all_results, key=lambda x: x["category"]):
